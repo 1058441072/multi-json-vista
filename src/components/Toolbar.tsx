@@ -1,4 +1,4 @@
-import { Upload, FileJson, Download, Search, Code2 } from "lucide-react";
+import { Upload, FileJson, Download, Search, Code2, Database } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
@@ -6,6 +6,7 @@ import { toast } from "sonner";
 interface ToolbarProps {
   onFileUpload: (files: FileList) => void;
   onPasteJson: () => void;
+  onLoadFromBackend: () => void;
   onExportAll: () => void;
   onFormatAll: () => void;
   searchTerm: string;
@@ -16,6 +17,7 @@ interface ToolbarProps {
 export const Toolbar = ({
   onFileUpload,
   onPasteJson,
+  onLoadFromBackend,
   onExportAll,
   onFormatAll,
   searchTerm,
@@ -53,6 +55,12 @@ export const Toolbar = ({
         <Button variant="secondary" size="sm" onClick={onPasteJson}>
           <FileJson className="h-4 w-4 mr-2" />
           Paste JSON
+        </Button>
+
+        {/* Load from Backend Button */}
+        <Button variant="secondary" size="sm" onClick={onLoadFromBackend}>
+          <Database className="h-4 w-4 mr-2" />
+          Load from Backend
         </Button>
 
         {/* Divider */}

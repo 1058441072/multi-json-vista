@@ -1,0 +1,4 @@
+project_id = "wbcxaiahnxobyxecallk"
+
+[functions.get-jsons]
+verify_jwt = false

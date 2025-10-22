@@ -4,6 +4,7 @@ import { JsonViewer, JsonData } from "@/components/JsonViewer";
 import { PasteJsonDialog } from "@/components/PasteJsonDialog";
 import { EmptyState } from "@/components/EmptyState";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 const Index = () => {
   const [jsonDataList, setJsonDataList] = useState<JsonData[]>([]);
@@ -87,6 +88,37 @@ const Index = () => {
     document.getElementById("file-upload")?.click();
   };
 
+  const handleLoadFromBackend = async () => {
+    try {
+      toast.loading("Loading from backend...");
+      
+      const { data, error } = await supabase.functions.invoke('get-jsons');
+      
+      if (error) {
+        console.error('Error loading from backend:', error);
+        toast.error(`Failed to load from backend: ${error.message}`);
+        return;
+      }
+
+      if (!data || !Array.isArray(data)) {
+        toast.error("Invalid data format from backend");
+        return;
+      }
+
+      const newJsonData: JsonData[] = data.map((item: any, index: number) => ({
+        id: `backend-${Date.now()}-${index}`,
+        name: item.data?.name || `Backend JSON ${index + 1}`,
+        data: item.data,
+      }));
+
+      setJsonDataList([...jsonDataList, ...newJsonData]);
+      toast.success(`Loaded ${newJsonData.length} JSON from backend`);
+    } catch (error) {
+      console.error('Unexpected error:', error);
+      toast.error("Failed to load from backend");
+    }
+  };
+
   return (
     <div className="flex flex-col h-screen bg-background">
       {/* SEO Metadata */}
@@ -100,6 +132,7 @@ const Index = () => {
       <Toolbar
         onFileUpload={handleFileUpload}
         onPasteJson={() => setPasteDialogOpen(true)}
+        onLoadFromBackend={handleLoadFromBackend}
         onExportAll={handleExportAll}
         onFormatAll={handleFormatAll}
         searchTerm={searchTerm}
